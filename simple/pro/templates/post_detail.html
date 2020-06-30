@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>{{post.name}}</h2>
+<h4>{{post.text}}</h4>
+
+<h1>comments</h1>
+<form action="/comment/postDetail/{{post.id}}" method="POST">
+    {{ comment_form.as_p }}
+    {% csrf_token %}
+    <button type="submit">Add comment</button>
+</form>
+
+{% for comment in comments %}
+<h3>{{comment.name}}</h3>
+<h5>{{comment.body}}</h5>
+ {% for replay in comment.replies.all %}
+            <p >{{ replay.name }} | {{ replay.created }}</p>
+            <li>{{ replay.body }}</li>
+        {% endfor %}
+<h5>Replay</h5>
+<form action="/comment/postDetail/{{post.id}}" method="POST">
+    {{ comment_form.as_p }}
+    {% csrf_token %}
+    <!-- Hidden input for parent comment.id -->
+    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+    <input class="btn btn-primary" type="submit" value="Replay">
+        </form>
+{% empty %}
+<h4>There are no comments yet.</h4>
+{% endfor %}
+
+</body>
+</html>
